@@ -6,20 +6,20 @@ import (
 	"log"
 )
 
-type ProcessCasesUseCase struct {
+type ProcessPatientsUseCase struct {
     patientsRepository ports.IPatients
 	WS                 ports.WS
 }
 
 // Cambiar 'type' por 'func' y devolver un puntero a ProcessCasesUseCase
-func NewProcessCasesUseCase(patientsRepository ports.IPatients, ws ports.WS) *ProcessCasesUseCase {
-	return &ProcessCasesUseCase{
+func NewProcessPatientsUseCase(patientsRepository ports.IPatients, ws ports.WS) *ProcessPatientsUseCase {
+	return &ProcessPatientsUseCase{
 		patientsRepository: patientsRepository,
 		WS:                 ws,
 	}
 }
 
-func (uc *ProcessCasesUseCase) Run(patients *entities.Patients) error {
+func (uc *ProcessPatientsUseCase) Run(patients *entities.Patients) error {
 	errSearch := uc.patientsRepository.FindID(patients.IDUsuario)
 	if errSearch != nil {
 		log.Println("Error finding patient ID")

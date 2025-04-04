@@ -17,10 +17,10 @@ func NewMysql() *MYSQL {
 
 }
 
-func (m *MYSQL) FindID(id int) (error) {
-	result := m.conn.QueryRow("SELECT id FROM patients WHERE id = ?", id)
+func (m *MYSQL) FindID(id_usuario int) (error) {
+	result := m.conn.QueryRow("SELECT id FROM patients WHERE id = ?", id_usuario)
 
-	if err := result.Scan(&id); err != nil {
+	if err := result.Scan(&id_usuario); err != nil {
 		return err
 	}
 	return nil

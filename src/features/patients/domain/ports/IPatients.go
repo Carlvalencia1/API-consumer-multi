@@ -1,5 +1,5 @@
 package ports 
 
 type IPatients interface {
-	FindID(id int) (error)
+	FindID(id_usuario int) (error)
 }

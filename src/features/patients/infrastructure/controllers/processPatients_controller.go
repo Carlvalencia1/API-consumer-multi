@@ -9,10 +9,10 @@ import (
 )
 
 type ProcessPatientsController struct {
-	UseCase *application.ProcessCasesUseCase
+	UseCase *application.ProcessPatientsUseCase
 }
 
-func NewProcessPatientsController(uc *application.ProcessCasesUseCase) *ProcessPatientsController {
+func NewProcessPatientsController(uc *application.ProcessPatientsUseCase) *ProcessPatientsController {
 	return &ProcessPatientsController{UseCase: uc}
 }
 
