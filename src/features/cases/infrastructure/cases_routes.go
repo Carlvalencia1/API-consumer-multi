@@ -20,6 +20,7 @@ func NewCasesRoutes(engine *gin.RouterGroup, processMessage controllers.ProcessM
 func (r *CasesRoutes) Run() {
 	casesRoutes := r.engine.Group("/cases")
 	{
+		// Cambié ProcessMessage por CreateMessage para que coincida con tu controlador
 		casesRoutes.POST("/", r.processMessage.CreateMessage)
 	}
 }
