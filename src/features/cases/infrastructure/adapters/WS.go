@@ -15,6 +15,7 @@ type WS struct {
 	conn *websocket.Conn
 }
 
+// NewWs crea una nueva conexión WebSocket que se mantendrá abierta.
 func NewWs() *WS {
 	// 1. Obtener URL del WebSocket desde variables de entorno
 	wsURL := os.Getenv("WS_SERVER_URL") // Ej: "ws://3.91.184.130:8081"
@@ -41,11 +42,16 @@ func NewWs() *WS {
 	dialer := websocket.DefaultDialer
 	dialer.HandshakeTimeout = timeout
 
-	// 5. Establecer conexión WebSocket
-	log.Printf("Conectando a WebSocket en: %s", parsedURL.String())
-	conn, _, err := dialer.Dial(parsedURL.String(), nil)
-	if err != nil {
-		log.Panicf("Error conectando al WebSocket: %v", err)
+	var conn *websocket.Conn
+	for {
+		log.Printf("Conectando a WebSocket en: %s", parsedURL.String())
+		conn, _, err = dialer.Dial(parsedURL.String(), nil)
+		if err != nil {
+			log.Printf("Error conectando al WebSocket: %v. Reintentando en 5 segundos...", err)
+			time.Sleep(5 * time.Second) // Esperar 5 segundos antes de intentar reconectar
+			continue // Reintentar la conexión
+		}
+		break // Salir del bucle si la conexión fue exitosa
 	}
 
 	log.Println("Conexión WebSocket establecida exitosamente")
@@ -71,6 +77,21 @@ func (ws *WS) SendMessage(medicalCase *entities.MedicalCase) error {
 
 	log.Printf("Mensaje enviado exitosamente: %s", string(message))
 	return nil
+}
+
+// Mantener la conexión abierta y leer mensajes de forma continua.
+func (ws *WS) KeepAlive() {
+	go func() {
+		for {
+			_, _, err := ws.conn.ReadMessage()
+			if err != nil {
+				log.Printf("Error al leer mensaje del WebSocket: %v. Intentando reconectar...", err)
+				ws.conn.Close() // Cerrar la conexión actual si hubo un error
+				ws.conn = nil   // Establecer la conexión como nula para forzar la reconexión
+				ws = NewWs()    // Intentar reconectar
+			}
+		}
+	}()
 }
 
 // Opcional: Método para cerrar la conexión
